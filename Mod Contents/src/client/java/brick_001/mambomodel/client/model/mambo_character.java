@@ -11,6 +11,8 @@ public class mambo_character extends EntityModel<MamboCharacterEntityRenderState
 
     private final Animation idleAnimation;
 	private final Animation walkAnimation;
+	private final Animation eatAnimation;
+	private final Animation hurtAnimation;
 
 	public mambo_character(ModelPart root) {
         super(root);
@@ -34,6 +36,8 @@ public class mambo_character extends EntityModel<MamboCharacterEntityRenderState
 
 		this.idleAnimation = mambo_characterAnimation.Idle.createAnimation(root);
 		this.walkAnimation = mambo_characterAnimation.Walk.createAnimation(root);
+		this.eatAnimation = mambo_characterAnimation.Eat.createAnimation(root);
+		this.hurtAnimation = mambo_characterAnimation.Hurt.createAnimation(root);
 	}
 	public static TexturedModelData getTexturedModelData() {
 		ModelData modelData = new ModelData();
@@ -156,6 +160,8 @@ public class mambo_character extends EntityModel<MamboCharacterEntityRenderState
 		this.Head.yaw = state.relativeHeadYaw * ((float)Math.PI / 180F);
 		this.Head.pitch = state.pitch * ((float)Math.PI / 180F);
 
+		this.hurtAnimation.apply(state.hurtAnimationState, state.age, 1.0F);
+		this.eatAnimation.apply(state.eatAnimationState, state.age, 1.0F);
 		this.idleAnimation.apply(state.idleAnimationState, state.age, 1.0F);
 		this.walkAnimation.applyWalking(state.limbSwingAnimationProgress, state.limbSwingAmplitude, 4.0F, 1.0F);
 	}

@@ -27,6 +27,8 @@ public class MamboCharacterEntityRenderer extends MobEntityRenderer<MamboCharact
 
         state.idleAnimationState.copyFrom(entity.idleAnimationState);
         state.walkAnimationState.copyFrom(entity.walkAnimationState);
+        state.eatAnimationState.copyFrom(entity.eatAnimationState);
+        state.hurtAnimationState.copyFrom(entity.hurtAnimationState);
     }
 
     @Override

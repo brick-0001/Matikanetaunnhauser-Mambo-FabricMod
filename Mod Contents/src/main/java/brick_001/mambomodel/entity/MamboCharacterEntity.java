@@ -4,10 +4,7 @@ import brick_001.mambomodel.entity.ai.DefendPlayerGoal;
 import brick_001.mambomodel.entity.ai.FollowPlayerGoal;
 import brick_001.mambomodel.entity.ai.FollowVillagerGoal;
 import brick_001.mambomodel.sound.ModSounds;
-import net.minecraft.entity.AnimationState;
-import net.minecraft.entity.EntityData;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -72,45 +69,39 @@ public class MamboCharacterEntity extends PathAwareEntity {
                 .add(EntityAttributes.ENTITY_INTERACTION_RANGE, 1.2D);
     }
 
-    // feeding for healing
+    // give & take carrot
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
+        ItemStack playerStack = player.getStackInHand(hand);
+        ItemStack mobStack = this.getMainHandStack();
 
-        // 1. Define your specific food and how much it heals
-        Item targetFood = Items.CARROT;
-        float healAmount = 4.0f;
+        // player give carrot
+        if (playerStack.isOf(Items.CARROT) && this.getMainHandStack().isEmpty()) {
+            if (!this.getEntityWorld().isClient()) {
 
-        // 2. Check if the player is holding the correct item
-        if (itemStack.isOf(targetFood)) {
+                ItemStack stackToEquip = playerStack.copyWithCount(1);
 
-            // 3. Check if the entity actually needs healing
-            if (this.getHealth() < this.getMaxHealth()) {
+                this.equipStack(EquipmentSlot.MAINHAND, stackToEquip);
 
-                // 4. Handle server-side logic (Healing and Item Consumption)
-                if (!this.getEntityWorld().isClient()) {
-                    this.heal(healAmount);
+                playerStack.decrement(1);
 
-                    // Consume the item if the player is NOT in Creative Mode
-                    if (!player.getAbilities().creativeMode) {
-                        itemStack.decrement(1);
-                    }
-
-                    // Play an eating sound so it feels responsive
-                    this.getEntityWorld().playSoundFromEntity(this, this, SoundEvents.ENTITY_FROG_EAT, SoundCategory.NEUTRAL, 1.0f, 1.3f);
-                }
-                // 5. Handle client-side logic (Visuals)
-                else {
-                    // Spawn a heart particle to show the player it worked
-                    this.getEntityWorld().addParticleClient(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getRandomBodyY() + 0.5, this.getZ(), 0.0, 0.0, 0.0);
-                }
-
-                // Return success to tell the game the interaction was handled
-                return ActionResult.SUCCESS;
+                this.playSound(SoundEvents.ENTITY_ALLAY_ITEM_GIVEN, 1.0f, 1.0f);
             }
+            return ActionResult.SUCCESS;
         }
 
-        // If the item wasn't the food, or the entity is already at full health, fallback to default behavior
+        // player take carrot
+        if (playerStack.isEmpty() && !mobStack.isEmpty()) {
+            if (!this.getEntityWorld().isClient()) {
+                player.setStackInHand(hand, mobStack.copy());
+
+                this.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+
+                this.playSound(SoundEvents.ENTITY_ALLAY_ITEM_TAKEN, 1.0f, 1.0f);
+            }
+            return ActionResult.SUCCESS;
+        }
+
         return super.interactMob(player, hand);
     }
 
@@ -157,17 +148,38 @@ public class MamboCharacterEntity extends PathAwareEntity {
 
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState walkAnimationState = new AnimationState();
+    public final AnimationState eatAnimationState = new AnimationState();
+    public final AnimationState hurtAnimationState = new AnimationState();
 
     @Override
     public void tick() {
         super.tick();
 
-        if (this.getVelocity().horizontalLengthSquared() > 1.0E-7) {
+        if (this.getVelocity().horizontalLengthSquared() > 0.1F) {
             this.idleAnimationState.stop();
             this.walkAnimationState.startIfNotRunning(this.age);
         } else {
             this.walkAnimationState.stop();
             this.idleAnimationState.startIfNotRunning(this.age);
         }
+
+        if (this.getHealth() < getMaxHealth()) {
+            this.walkAnimationState.stop();
+            this.idleAnimationState.stop();
+            this.hurtAnimationState.stop();
+
+            if (this.getMainHandStack() != ItemStack.EMPTY) {
+                this.equipStack(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+
+                this.eatAnimationState.start(this.age);
+
+                this.getEntityWorld().playSoundFromEntity(this, this, SoundEvents.ENTITY_FROG_EAT, SoundCategory.NEUTRAL, 1.0f, 1.3f);
+                this.getEntityWorld().addParticleClient(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getRandomBodyY() + 0.5, this.getZ(), 0.0, 1.0, 0.0);
+
+                this.heal(3.0F);
+            }
+        }
+
+
     }
 }
