@@ -1,0 +1,4 @@
+accessWidener v1 named
+
+# Expose Animation.of to all packages
+accessible method net/minecraft/client/render/entity/animation/Animation of (Lnet/minecraft/client/model/ModelPart;Lnet/minecraft/client/render/entity/animation/AnimationDefinition;)Lnet/minecraft/client/render/entity/animation/Animation;

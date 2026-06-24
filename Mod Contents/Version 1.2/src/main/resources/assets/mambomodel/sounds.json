@@ -1,0 +1,27 @@
+{
+  "entity.mambo_character.spawn": {
+    "category": "neutral",
+    "sounds": [
+      "mambomodel:entity/mambo_character/matikanetaunnhauser_des"
+    ]
+  },
+  "entity.mambo_character.ambient": {
+    "category": "neutral",
+    "sounds": [
+      "mambomodel:entity/mambo_character/yadayada",
+      "mambomodel:entity/mambo_character/mambo-sing"
+    ]
+  },
+  "entity.mambo_character.hurt": {
+    "category": "neutral",
+    "sounds": [
+      "mambomodel:entity/mambo_character/edododooo"
+    ]
+  },
+  "entity.mambo_character.death": {
+    "category": "neutral",
+    "sounds": [
+      "mambomodel:entity/mambo_character/mambo-impact"
+    ]
+  }
+}

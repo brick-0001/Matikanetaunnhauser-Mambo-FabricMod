@@ -1,0 +1,3 @@
+Sorry but no 1.0 version exists since it was replaced with 1.1
+
+Do not expect the 1.0 to be released to GitHub

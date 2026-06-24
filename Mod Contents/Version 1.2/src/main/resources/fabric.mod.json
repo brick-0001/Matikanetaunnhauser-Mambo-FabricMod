@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "mambomodel",
+  "version": "${version}",
+  "accessWidener": "mambomodel.accessWidener",
+  "name": "mamboModel",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "brick_001.mambomodel.client.MambomodelDataGenerator"
+    ],
+    "client": [
+      "brick_001.mambomodel.client.MambomodelClient"
+    ],
+    "main": [
+      "brick_001.mambomodel.Mambomodel"
+    ]
+  },
+  "mixins": [
+    "mambomodel.mixins.json",
+    {
+      "config": "mambomodel.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}

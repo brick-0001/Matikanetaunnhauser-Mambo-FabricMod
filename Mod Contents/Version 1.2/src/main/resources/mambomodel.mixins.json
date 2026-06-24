@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "brick_001.mambomodel.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "SpawnRestrictionInvoker"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  }
+}
